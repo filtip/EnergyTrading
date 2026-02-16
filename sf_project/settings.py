@@ -1,0 +1,102 @@
+from dataclasses import dataclass
+import datetime as dt
+import pandas as pd
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+DATA_DIR = ROOT / "sf_project" / "load_data"
+
+@dataclass
+class ProjectData:
+    data_in: pd.DataFrame
+    data_w_contract_id_in: pd.DataFrame
+    bid_ask_in: pd.DataFrame
+
+    data_out: pd.DataFrame
+    data_w_contract_id_out: pd.DataFrame
+    bid_ask_out: pd.DataFrame
+
+def load_project_data() -> ProjectData:
+    """
+    Načte data k celému projektu:
+    - in-sample / out-of-sample
+    - prices
+    - prices with contract_id
+    - bid & ask
+    """
+
+    def read(name):
+        path = DATA_DIR / name
+        if not path.exists():
+            raise FileNotFoundError(f"Missing file: {path}")
+        return pd.read_parquet(path)
+
+    return ProjectData(
+        data_in=read("prices_in_sample.parquet"),
+        data_w_contract_id_in=read("prices_in_sample_w_contract_id.parquet"),
+        bid_ask_in=read("bidask_in_sample.parquet"),
+        data_out=read("prices_out_of_sample.parquet"),
+        data_w_contract_id_out=read("prices_out_of_sample_w_contract_id.parquet"),
+        bid_ask_out=read("bidask_out_of_sample.parquet"),
+    )
+
+#Otevírání obchodů + zavírání obchodů (časové omezení)
+open_until = dt.time(10,00)
+close_time_limit = dt.time(11,00)
+
+BEST_PREDICTORS = {
+    "GAS_M_1": {
+        "predictor_cols": ["M_1", "QY_1", "EM_M_1", "GAS_M_2"],
+        "optimal_threshold": [0.05, 0.075, 0.1, 0.125, 0.15]},
+
+    "GAS_M_2": {
+        "predictor_cols": ["M_1", "QY_1", "GAS_M_1"],
+        "optimal_threshold": [0.05, 0.075, 0.1, 0.125, 0.15]},
+
+    "EM_M_1": {
+        "predictor_cols": ["M_1", "QY_1", "Y_1", "GAS_M_1"],
+        "optimal_threshold": [0.2, 0.3, 0.4, 0.5, 0.6]},
+
+    "QY_2" : {
+        "predictor_cols": ["M_1", "QY_1", "Y_1"],
+        "optimal_threshold": [0.2, 0.3, 0.4, 0.5, 0.6]},
+
+    "QY_3": {
+        "predictor_cols": ["M_1", "QY_1", "Y_1"],
+        "optimal_threshold": [0.2, 0.3, 0.4, 0.5, 0.6]},
+
+    "QY_4": {
+        "predictor_cols": ["QY_1","Y_1","EM_M_1"],
+        "optimal_threshold": [0.2, 0.3, 0.4, 0.5, 0.6]},
+
+    "QY_5": {
+        "predictor_cols": ["QY_1","Y_1","EM_M_1","GAS_M_1"],
+        "optimal_threshold": [0.2, 0.3, 0.4, 0.5, 0.6]},
+
+    "Y_2": {
+        "predictor_cols": ["M_1", "QY_1", "Y_1", "GAS_M_1"],
+        "optimal_threshold": [0.2, 0.3, 0.4, 0.5, 0.6]},
+
+    "M_2": {
+        "predictor_cols": ["M_1", "QY_1", "EM_M_1","GAS_M_1"],
+        "optimal_threshold": [0.2, 0.3, 0.4, 0.5, 0.6]},
+
+    "M_3": {
+        "predictor_cols": ["M_1", "QY_1", "EM_M_1","GAS_M_1"],
+        "optimal_threshold": [0.2, 0.3, 0.4, 0.5, 0.6]},
+
+    "M_4": {
+        "predictor_cols": ["M_1", "QY_1", "Y_1", "GAS_M_1"],
+        "optimal_threshold": [0.2, 0.3, 0.4, 0.5, 0.6]},
+
+    "M_5": {
+        "predictor_cols": ["QY_1", "Y_1", "EM_M_1", "GAS_M_1"],
+        "optimal_threshold": [0.35, 0.525, 0.7, 0.875, 1.05]},
+
+    "IT_M_1": {
+        "predictor_cols": ["M_1","QY_1", "Y_1", "EM_M_1"],
+        "optimal_threshold": [0.35, 0.525, 0.7, 0.875, 1.05]},
+
+    "IT_QY_1": {
+        "predictor_cols": ["M_1", "QY_1", "Y_1", "EM_M_1","GAS_M_1"],
+        "optimal_threshold": [0.35, 0.525, 0.7, 0.875, 1.05]}}
