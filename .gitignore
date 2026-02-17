@@ -1,7 +1,6 @@
 .idea/
 .venv/
 __pycache__/
-.ipynb_checkpoints/
 
 sf_project/data/raw_data/
 

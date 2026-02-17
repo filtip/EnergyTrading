@@ -40,4 +40,3 @@ jupyter notebook
 
 Then select kernel:
 Kernel → Change Kernel → energytrading
-
