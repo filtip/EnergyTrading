@@ -4,7 +4,6 @@ import numpy as np
 
 class DataConfig:
     """
-    Parameters:
         data_dir (Path): Cesta k adresáři s měsíčními parquet soubory.
         tz (str): Časová zóna, do které budou data převedena
         freq (str): Frekvence minutového gridu
@@ -24,8 +23,6 @@ class LoadRawData:
     def load(self, month: str) -> pd.DataFrame:
         """
         Metoda načte původní data pro konkrétní měsíc
-        Nastaví timestamp jako index, převede index na správně časové pásmo, sjednotí mapping pro product_id
-
         param month: měsíc, pro který chceš data načíst
         """
         file_path = self.cfg.data_dir / f"data_{month}.parquet"
@@ -43,7 +40,6 @@ class LoadRawData:
         Vytvoří minutová časový grid pro každý den v indexu
 
         - Každý den vytvoří minutový grid od první až do posledního pozorování (nevytváři index přes noc)
-
         :param idx: Časový index pro který chceš vytvořit grid
         :return: pd.DatetimeIndex: spojený časový grid přes všechny obchodní dny
         """

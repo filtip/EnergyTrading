@@ -15,7 +15,7 @@ class Specification:
 
 class DataTransformation:
     """
-    V této třídě jsou metody, které počítají overnight gaps
+    V této třídě jsou metody, které spočítají overnight gaps
     """
     def __init__(self, spec: Specification, interval_length: int = 20, number_of_observations: int = 15):
         """
@@ -157,7 +157,7 @@ class TrainModel:
         self.rsquared = None
         self.training_months = None
 
-    def _fit(self, data: pd.DataFrame, prediction_month: str) -> tuple:
+    def fit(self, data: pd.DataFrame, prediction_month: str) -> tuple:
         """
         Pro konkrétí data, ktera tato metoda dostane natrénuje lineární model s targetem target_col a prediktory: predictor_cols
         Model je natrénován na všech měsících, které jsou v data bez prediction_month (one-month-out)
@@ -202,8 +202,6 @@ class TrainModel:
 
         # Spočítej MSE na testovací sadě
         if X_test.shape[0] == 0:
-            X_test = None
-            y_test = None
             mse_test = None
         else:
             X_test = sm.add_constant(X_test)
@@ -221,12 +219,12 @@ class TrainModel:
     def fit_on_scenario(self, data: pd.DataFrame, prediction_month: str):
         """
         Model se natrénuje na všech datech bez dat z měsíce prediction_month
-        Tato metoda vytvoři over_night gaps a pro daný scénář (target, predictors) natrénuje model
+        Tato metoda vytvoři overnight gaps a pro daný scénář (target, predictors) natrénuje model
         :param data: minutová data s cenami kontraktů
         :param prediction_month: zvol měsíc, který chceš predikovat (model na něm nebude natrénován)
         """
         scenario = self.data_transformation.calculate_overnight_gaps(data)
-        model, rsquared, mse_train, mse_test, training_months = self._fit(scenario, prediction_month)
+        model, rsquared, mse_train, mse_test, training_months = self.fit(scenario, prediction_month)
 
         self.model = model
         self.mse_train = mse_train
@@ -249,7 +247,7 @@ class TrainModel:
         data_hist = data_all[data_all.index < start]
 
         scenario = self.data_transformation.calculate_overnight_gaps(data_hist)
-        model, rsquared, mse_train, mse_test, training_months = self._fit(scenario, prediction_month)
+        model, rsquared, mse_train, mse_test, training_months = self.fit(scenario, prediction_month)
 
         self.model = model
         self.mse_train = mse_train
@@ -339,7 +337,7 @@ class InputsBuilder:
 
         :param data_w_contract_id -> minutová data společně s product_id, cotract_id, price
         :param prediction_month: měsíc, který chceš predikovat
-        return: DataFrame s ranní cenou prediktorů a přislušnými contract_id pro target, predictors
+        return: DataFrame s ranní cenou prediktorů a přislušnými contract_id pro target, predictors v daném měsíci
         """
         # Vyber pouze prediction_month
         data_month = data_w_contract_id.loc[prediction_month]

@@ -6,40 +6,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-@dataclass
-class ProjectData:
-    data_in: pd.DataFrame
-    data_w_contract_id_in: pd.DataFrame
-    bid_ask_in: pd.DataFrame
-
-    data_out: pd.DataFrame
-    data_w_contract_id_out: pd.DataFrame
-    bid_ask_out: pd.DataFrame
-
-def load_project_data() -> ProjectData:
-    """
-    Načte data k celému projektu:
-    - in-sample / out-of-sample
-    - prices
-    - prices with contract_id
-    - bid & ask
-    """
-
-    def read(name):
-        path = ROOT / "sf_project" / name
-        if not path.exists():
-            raise FileNotFoundError(f"Missing file: {path}")
-        return pd.read_parquet(path)
-
-    return ProjectData(
-        data_in=read("prices_in_sample.parquet"),
-        data_w_contract_id_in=read("prices_in_sample_w_contract_id.parquet"),
-        bid_ask_in=read("bidask_in_sample.parquet"),
-        data_out=read("prices_out_of_sample.parquet"),
-        data_w_contract_id_out=read("prices_out_of_sample_w_contract_id.parquet"),
-        bid_ask_out=read("bidask_out_of_sample.parquet"),
-    )
-
 #Otevírání obchodů + zavírání obchodů (časové omezení)
 open_until = dt.time(10,00)
 close_time_limit = dt.time(11,00)

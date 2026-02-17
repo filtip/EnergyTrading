@@ -92,7 +92,7 @@ class SingleEntry:
         Nastav threshold = o kolik se predikce musí lišit, abych vstoupil do obchodu
         Otevře vždy pozici o velikosti 1.
         Otevře pozici nejpozději do open_until
-        :return: position, entry_price, trade_type, position_size
+        :return: position (1= long, -1 = short), entry_price, trade_type (short/long), position_size
         """
 
         if pd.notna(bid) and pd.notna(ask) and pd.notna(prediction):
@@ -250,7 +250,7 @@ class Backtester:
     def __init__(self, data_builder: DataBuilder, strategy):
         """
         :param data_builder:
-        :param strategy: zviol strategii, kterou chceš použít (multi/single)
+        :param strategy: zvol strategii, kterou chceš použít (multi/single)
         """
         self.data_builder = data_builder
         self.strategy = strategy
@@ -300,7 +300,7 @@ def run_multiple_contracts(prices, bid_ask, contracts, dict_thresholds, open_unt
 
         pred_file = prediction_path / f"{contract}_predictions.parquet"
         if not pred_file.exists():
-            print(f"  -> Missing prediction file, skipping.")
+            print(f"Missing prediction file, skipping.")
             continue
 
         prediction = pd.read_parquet(pred_file)
