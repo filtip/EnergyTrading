@@ -4,7 +4,7 @@ import pandas as pd
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "sf_project" / "load_data"
+
 
 @dataclass
 class ProjectData:
@@ -26,7 +26,7 @@ def load_project_data() -> ProjectData:
     """
 
     def read(name):
-        path = DATA_DIR / name
+        path = ROOT / "sf_project" / name
         if not path.exists():
             raise FileNotFoundError(f"Missing file: {path}")
         return pd.read_parquet(path)

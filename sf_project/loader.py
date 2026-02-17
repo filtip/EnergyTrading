@@ -4,8 +4,6 @@ import numpy as np
 
 class DataConfig:
     """
-    Základní konfigurace pro zpracování surových dat.
-
     Parameters:
         data_dir (Path): Cesta k adresáři s měsíčními parquet soubory.
         tz (str): Časová zóna, do které budou data převedena
@@ -25,11 +23,10 @@ class LoadRawData:
 
     def load(self, month: str) -> pd.DataFrame:
         """
-        - Funkce načte původní data pro konkrétní měsíc
-        - Nastaví timestamp jako index, převede index na správně časové pásmo, sjednotí mapping pro product_id
+        Metoda načte původní data pro konkrétní měsíc
+        Nastaví timestamp jako index, převede index na správně časové pásmo, sjednotí mapping pro product_id
 
-        Parameters:
-            month: str - měsíc, pro který chceš data načíst
+        param month: měsíc, pro který chceš data načíst
         """
         file_path = self.cfg.data_dir / f"data_{month}.parquet"
         df = pd.read_parquet(file_path)

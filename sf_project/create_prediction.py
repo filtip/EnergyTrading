@@ -527,6 +527,8 @@ class Prediction:
     def predict_whole_month(self, data: pd.DataFrame, data_w_contract_id: pd.DataFrame, prediction_month: str) -> pd.DataFrame:
         """
         Zkombinuje predikce v konkrétním měsíci -> predikce první den + predikce po zbytek měsíce
+        Pro OOS predicke vlož data z celého období (musíš znát přechod měsíce in sample -> out of sample)
+
         :param data: minutová data s cenami
         :param data_w_contract_id: minutová data contract_id, product_id, price
         :param prediction_month:
